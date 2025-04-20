@@ -1,20 +1,22 @@
 # Rational Commitment
 
-A Solidity implementation of rational number commitments using elliptic curves. Implementation includes being able to create a commitment as the prover with two rational numbers that have different denominators. As the verifier you are able to verify the addition of two rational number commitments with the commitment and the result of the addition of the two rational numbers.
+A Solidity implementation of rational number commitments and verificationusing elliptic curves.
+
+Implementation includes being able to create two commitments as the prover for two rational numbers that have different denominators. As the verifier you are able to verify the addition of two rational number commitments with the commitments and the result of the addition of the two rational numbers.
 
 The commitment and the verificaiton is implemented.
 
 ## Overview
 
 This project implements a system for creating and verifying commitments to rational numbers using elliptic curve cryptography on the BN254 curve. It allows for:
-- Creating commitments to rational numbers (a/b)
-- Verifying addition of rational number commitments
+- Creating commitments to two rational numbers (a/b) and (c/d) being added together to form (a/b + c/d)
+- Verifying addition of two rational number commitments
 - Basic elliptic curve operations (addition, scalar multiplication)
 - There is full unit testing for the RationalCommitment.sol contract, including calling the precompiled functions 0x05, 0x06, 0x07.
+- I have added features to be able to run tests locally using Hardhat, also to deploy to the sepolia network or fork the mainnet.
 
 Note that we assume the BN128 curve is used. (Also known as alt_bn128 and BN254).
 Eliptic curve equation: y² = x³ + 3
-
 
 ## To start and run tests using local Hardhat network
 
@@ -26,8 +28,8 @@ npx hardhat test
 
 ## To deploy to sepolia directly
 
-1. Execute step "To start and run tests"
-2. Update the .env file with your private key and alchemy apikey.
+1. Execute step *"To start and run tests"*
+2. Update the *.env* file with your *private key* and *alchemy apikey*.
 3. Clean up envrionment and compile
 ```bash
 npx hardhat clean
