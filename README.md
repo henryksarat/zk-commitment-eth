@@ -74,10 +74,12 @@ function fermatInv(
 ```
 
 ## To start
-```bash
+1. Update the .env file with your private key and alchemy key.
+2. Install the dependencies
+```bash 
 npm init --yes
-npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox @openzeppelin/contracts dotenv
-npx hardhat init 
+npm install
+npx hardhat test
 ```
 
 ## To deploy to sepolia directly
