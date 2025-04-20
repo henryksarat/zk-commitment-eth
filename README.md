@@ -13,6 +13,51 @@ This project implements a system for creating and verifying commitments to ratio
 Note that we assume the BN128 curve is used. (Also known as alt_bn128 and BN254).
 Eliptic curve equation: y² = x³ + 3
 
+
+## To start and run tests
+
+```bash 
+npm init --yes
+npm install
+npx hardhat test
+```
+
+## To deploy to sepolia directly
+
+1. Execute step "To start and run tests"
+2. Update the .env file with your private key and alchemy key.
+3. Clean up envrionment and compile
+```bash
+npx hardhat clean
+npx hardhat compile
+```
+4. Deploy the contracts
+
+For the ErcToken contract as a base line test, you can deploy it with the following command:
+
+```bash
+npx hardhat deploy ErcToken --network sepolia
+```
+
+For the RationalCommitment contract, you can deploy it with the following command:
+```bash
+npx hardhat deploy RationalCommitment --network sepolia
+```
+
+## Testing
+
+Run the tests using local Hardhat network:
+```bash
+npx hardhat test
+```
+
+Or run the tests using a fork of mainnet:
+1. Update the .env file with your private key and alchemy key.
+2. Run the tests with the following command:
+```bash
+FORK=true npx hardhat test
+```
+
 ## RationalCommitmenet.sol Contract Functions
 
 ### `constructRationalCommitmentsWithPreNormalization`
@@ -71,43 +116,6 @@ function fermatInv(
     uint256 a,
     uint256 p
 ) public view returns (uint256)
-```
-
-## To start
-1. Update the .env file with your private key and alchemy key.
-2. Install the dependencies
-```bash 
-npm init --yes
-npm install
-npx hardhat test
-```
-
-## To deploy to sepolia directly
-
-1. Clean up envrionment and compile
-```bash
-npx hardhat clean
-npx hardhat compile
-```
-
-2. Update the .env file with your private key and alchemy key.
-
-For the ErcToken contract as a base line test, you can deploy it with the following command:
-
-```bash
-npx hardhat deploy ErcToken --network sepolia
-```
-
-For the RationalCommitment contract, you can deploy it with the following command:
-```bash
-npx hardhat deploy RationalCommitment --network sepolia
-```
-
-## Testing
-
-Run the tests using a fork of mainnet in hardhat:
-```bash
-npx hardhat test
 ```
 
 ## G's used in unit tests
