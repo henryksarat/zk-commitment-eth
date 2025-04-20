@@ -1,6 +1,8 @@
 # Rational Commitment
 
-A Solidity implementation of rational number commitments using elliptic curves. The commitment and the verificaiton is implemented.
+A Solidity implementation of rational number commitments using elliptic curves. Implementation includes being able to create a commitment as the prover with two rational numbers that have different denominators. As the verifier you are able to verify the addition of two rational number commitments with the commitment and the result of the addition of the two rational numbers.
+
+The commitment and the verificaiton is implemented.
 
 ## Overview
 
@@ -14,7 +16,7 @@ Note that we assume the BN128 curve is used. (Also known as alt_bn128 and BN254)
 Eliptic curve equation: y² = x³ + 3
 
 
-## To start and run tests
+## To start and run tests using local Hardhat network
 
 ```bash 
 npm init --yes
@@ -25,7 +27,7 @@ npx hardhat test
 ## To deploy to sepolia directly
 
 1. Execute step "To start and run tests"
-2. Update the .env file with your private key and alchemy key.
+2. Update the .env file with your private key and alchemy apikey.
 3. Clean up envrionment and compile
 ```bash
 npx hardhat clean
@@ -61,7 +63,7 @@ FORK=true npx hardhat test
 ## RationalCommitmenet.sol Contract Functions
 
 ### `constructRationalCommitmentsWithPreNormalization`
-Creates commitments to two rational numbers. This function pre-normalizes the denominator so when we do the verification we can pass the least amount of information: numerator and denominator.
+This is the function that would be called by the *prover*. Creates commitments to two rational numbers. This function pre-normalizes the denominator so when we do the verification we can pass the least amount of information: numerator and denominator.
 ```solidity
 function constructRationalCommitments(
     uint256 a, uint256 da,  // First rational number a/da
@@ -70,7 +72,7 @@ function constructRationalCommitments(
 ```
 
 ### `rationalAdd`
-Verifies the addition of two rational number commitments. Note that A and B are the commitments to the rational numbers that have been pre-normalized.
+This is the function that would be called by the *verifier*. Verifies the addition of two rational number commitments. Note that A and B are the commitments to the rational numbers that have been pre-normalized.
 ```solidity
 function rationalAdd(
     ECPoint calldata A,
