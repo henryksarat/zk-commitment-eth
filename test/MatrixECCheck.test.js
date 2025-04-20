@@ -1,8 +1,10 @@
 const { expect } = require("chai");
+const { G1, G2, G3, G4 } = require("./curvePoints");
 
-describe.only("MatrixECCheck", function() {
+describe("MatrixECCheck", function() {
   let checker;
   let operations;
+  let rc;  // Add RC variable
 
   beforeEach(async function() {
     // Deploy the DefaultOperations contract
@@ -14,6 +16,11 @@ describe.only("MatrixECCheck", function() {
     const MatrixECCheck = await ethers.getContractFactory("MatrixECCheck");
     const checkerDeployed = await MatrixECCheck.deploy();
     checker = await ethers.getContractAt("MatrixECCheck", await checkerDeployed.getAddress());
+
+    // Deploy the RationalCommitment contract
+    const RationalCommitment = await ethers.getContractFactory("RationalCommitment");
+    const rcDeployed = await RationalCommitment.deploy();
+    rc = await ethers.getContractAt("RationalCommitment", await rcDeployed.getAddress());
   });
 
   it("should multiply matrix correctly", async function() {
@@ -52,6 +59,67 @@ describe.only("MatrixECCheck", function() {
     const vector = [5, 6];
     
     await expect(checker.matrixMulBasic(matrix, n, vector, await operations.getAddress()))
+      .to.be.revertedWith("Invalid matrix or vector dimensions");
+  });
+
+  it("should multiply EC matrix correctly", async function() {
+    const n = 2;
+    const matrix = [
+      1,2,
+      3,4
+    ];
+    const vector = [G1, G2];  // 2x1 vector
+
+    const result = await checker.matrixMulEC(matrix, n, vector, rc.getAddress());
+
+    // Expected results:
+    // result[0] = G1 * 2 + G2 = G5
+    // result[1] = G3 + 4 * G2 = G11
+    const expected0 = await rc.ecMul(G1, 5);
+    const expected1 = await rc.ecMul(G1, 11);
+
+    expect(result[0].x).to.equal(expected0.x);
+    expect(result[0].y).to.equal(expected0.y);
+    expect(result[1].x).to.equal(expected1.x);
+    expect(result[1].y).to.equal(expected1.y);
+  });
+
+  it("should multiply 3*3 EC matrix correctly", async function() {
+    const n = 3;
+    const matrix = [
+      1,2,9,
+      3,4,10,
+      5,6,11
+    ];
+    const vector = [G1, G2, G3];  
+
+    const result = await checker.matrixMulEC(matrix, n, vector, rc.getAddress());
+
+    // Expected results:
+    // result[0] = 1* G1 + 2* G2 + 9* G3 = G1 + G4 + G27 = G25
+    // result[1] = 3* G1 + 4* G2 + 10* G3 = G3 + G8 + G30 = G41
+    // result[2] = 5 * G1 + 6 * G2 + 11 * G3 = G5 + G12 + G33 = G50
+    const expected0 = await rc.ecMul(G1, 32);
+    const expected1 = await rc.ecMul(G1, 41);
+    const expected2 = await rc.ecMul(G1, 50);
+
+    expect(result[0].x).to.equal(expected0.x);
+    expect(result[0].y).to.equal(expected0.y);
+    expect(result[1].x).to.equal(expected1.x);
+    expect(result[1].y).to.equal(expected1.y);
+    expect(result[2].x).to.equal(expected2.x);
+    expect(result[2].y).to.equal(expected2.y);
+  });
+
+  it("should revert EC matrix multiplication with invalid dimensions", async function() {
+    const n = 2;
+    const matrix = [
+      2, 3, 
+      4,  // Only providing 3 points for a 2x2 matrix
+    ];
+    const vector = [G1, G2];
+
+    await expect(checker.matrixMulEC(matrix, n, vector, rc.getAddress()))
       .to.be.revertedWith("Invalid matrix or vector dimensions");
   });
 }); 

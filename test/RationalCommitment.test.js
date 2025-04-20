@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-const { G, G2, G3 } = require("./curvePoints");
+const { G1, G2, G3 } = require("./curvePoints");
 
 // Helper function to convert point to format expected by isOnCurve
 const toPoint = (point) => ({
@@ -53,7 +53,7 @@ describe("Rational Commitment", function () {
 
             testPoints.forEach(({ scalar, expected, description }) => {
                 it(`Should compute ${description} correctly`, async function () {
-                    const result = await rationalCommitment.ecMul(G, scalar);
+                    const result = await rationalCommitment.ecMul(G1, scalar);
                     const resultPoint = toPoint(result);
 
                     // Verify result is on curve
@@ -71,12 +71,12 @@ describe("Rational Commitment", function () {
             const additionTests = [
                 {
                     name: "G + G = 2G",
-                    points: { p1: G, p2: G },
+                    points: { p1: G1, p2: G1 },
                     expected: G2
                 },
                 {
                     name: "G + 2G = 3G",
-                    points: { p1: G, p2: G2 },
+                    points: { p1: G1, p2: G2 },
                     expected: G3
                 }
             ];
@@ -100,7 +100,7 @@ describe("Rational Commitment", function () {
 
     describe("Point Validation", function () {
         const points = [
-            { name: "G", point: G },
+            { name: "G", point: G1 },
             { name: "2G", point: G2 },
             { name: "3G", point: G3 }
         ];
