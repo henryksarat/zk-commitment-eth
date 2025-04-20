@@ -79,4 +79,29 @@ contract MatrixECCheck {
 
         return result;
     }
+
+    function verifyMatrixMultClaim(
+        uint256[] calldata matrix,
+        uint256 n,
+        RationalCommitment.ECPoint[] calldata s,
+        RationalCommitment.ECPoint calldata G1,
+        uint256[] calldata o,
+        RationalCommitment rc
+    ) public view returns (bool) {
+        if (matrix.length != n * n || s.length != n || o.length != n) {
+            revert("Invalid input dimensions");
+        }
+
+        RationalCommitment.ECPoint[] memory lhs = matrixMulEC(matrix, n, s, rc);
+
+        for (uint256 i = 0; i < n; i++) {
+            RationalCommitment.ECPoint memory rhs = rc.ecMul(G1, o[i]);
+
+            if (lhs[i].x != rhs.x || lhs[i].y != rhs.y) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
